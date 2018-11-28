@@ -222,40 +222,19 @@ client.on('message',async message => {
   fs.writeFile(path, JSON.stringify(credits, null, 5), function(err) {if(err) console.log(err)});
 
   
-  if(message.content.startsWith(prefix + "credit")) {
-  if(args[0] !== `${prefix}credit` && args[0] !== `${prefix}credits`) return;
-
-  if(args[2]) {
-    if(isNaN(args[2])) return message.channel.send('**:heavy_multiplication_x:| هذه الخانة يجب ان تتكون من ارقام وليس احرف.**');
-    if(mention.bot) return message.channel.send(`**:heavy_multiplication_x:| ${message.content.split(' ')[1]} لم يتم العثور على**`);
-    if(mention.id === message.author.id) return message.channel.send('**:heavy_multiplication_x:| لا يمكنك تحويل كردت لنفسك**');
-    if(credits[author].credits < balance) return message.channel.send('**:heavy_multiplication_x:| أنت لا تملك هذا القدر من الكردت**');
-    var one = Math.floor(Math.random() * 9) + 1;
-    var two = Math.floor(Math.random() * 9) + 1;
-    var three = Math.floor(Math.random() * 9) + 1;
-    var four = Math.floor(Math.random() * 9) + 1;
-
-    var number = `${one}${two}${three}${four}`;
-    
-    message.channel.send(`**:heavy_dollar_sign:| \`${number}\`, أكتب الرقم للأستمرار**`).then(m => {
-      message.channel.awaitMessages(m => m.author.id === message.author.id, {max: 1, time: 10000}).then(c => {
-        if(c.first().content === number) {
-          m.delete();
-          message.channel.send(`**:atm:| ${message.author.username}, قام بتحويل \`${balance}\` لـ ${mention}**`);
-          credits[author].credits += (-balance);
-          credits[mention.id].credits += (+balance);
-          fs.writeFile(path, JSON.stringify(credits, null, 5), function(err) {if(err) console.log(err)});
-        } else if(c.first().content !== number) {
-          m.delete();
-          message.channel.send(`** :money_with_wings: | تم الغاء الإرسال**`);
-        }
-      });
-    });
+  if (message.content.startsWith(prefix + 'credit')) {
+  if(men) {
+    if (!profile[men.id]) profile[men.id] = {
+    lastDaily:'Not Collected',
+    credits: 1,
+  };
   }
-  if(!args[2]) {
-    if(mention.bot) return message.channel.send(`**:heavy_multiplication_x:| ${message.content.split(' ')[1]} لم يتم العثور على**`);
-    message.channel.send(`**${mention.username}, your :credit_card: balance is **${credits[mention.id].credits}`);
-  } 
+  if(men) {
+message.channel.send(`** ${men.username}, :credit_card: balance` + " is `" + `${profile[men.id].credits}$` + "`.**")
+} else {
+  message.channel.send(`** ${message.author.username}, your :credit_card: balance` + " is `" + `${profile[message.author.id].credits}$` + "`.**")
+}
+}
   
   }
   if(message.content.startsWith(prefix + "daily")) {
